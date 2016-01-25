@@ -1,0 +1,11 @@
+image: gcc:5.2.0
+stages:
+  - build
+
+build-job:
+  stage: build
+  script:
+    - make
+  artifacts:
+    paths:
+      - magic-packet
