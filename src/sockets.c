@@ -37,11 +37,9 @@
 #include <errno.h>
 
 
-void print_sockaddr(char *msg, int indent_level, struct sockaddr *sock_addr)
+void print_sockaddr_in(char *msg, int indent_level, struct sockaddr_in *sock_addr)
 {
     const int space_sz = 4;
-
-    struct sockaddr_in * sock_inet = (struct sockaddr_in *) sock_addr;
 
     char spacer[space_sz * indent_level + 1];
     memset(spacer, ' ', space_sz * indent_level);
@@ -57,19 +55,19 @@ void print_sockaddr(char *msg, int indent_level, struct sockaddr *sock_addr)
     LOG(
         INFO,
         "sin_family: %d, sin_port: %d, sin_addr: %x (%s), sin_zero: ",
-        sock_inet->sin_family, sock_inet->sin_port,
-        sock_inet->sin_addr.s_addr, inet_ntoa(sock_inet->sin_addr)
+        sock_addr->sin_family, sock_addr->sin_port,
+        sock_addr->sin_addr.s_addr, inet_ntoa(sock_addr->sin_addr)
     );
 
     for (int i = 0; i < 8; i++) {
-        LOG(INFO, ", %d", sock_inet->sin_zero[i]);
+        LOG(INFO, ", %d", sock_addr->sin_zero[i]);
     }
 
     LOG(INFO, "\n");
 
 }
 
-int cpy_sockaddr(struct sockaddr *src, struct sockaddr **dest)
+int cpy_sockaddr_in(struct sockaddr_in *src, struct sockaddr_in **dest)
 {
     if (src == NULL) {
         *dest = NULL;
@@ -77,22 +75,20 @@ int cpy_sockaddr(struct sockaddr *src, struct sockaddr **dest)
     }
 
     LOG(DEBUG, "        ... Allocating sockaddr...\n");
-    *dest = malloc(sizeof(struct sockaddr));
+    *dest = malloc(sizeof(struct sockaddr_in));
 
     LOG(DEBUG, "         ... Setting values\n");
-    LOG(DEBUG, "             ... Setting sa_len: \n");
-    (*dest)->sa_len = src->sa_len;
-    LOG(DEBUG, "             ... Setting sa_family\n");
-    (*dest)->sa_family = src->sa_family;
-    LOG(DEBUG, "             ... Setting sa_data\n");
-    for (int i = 0; i < 14; i++) {
-        (*dest)->sa_data[i] = src->sa_data[i];
-    }
+    LOG(DEBUG, "             ... Setting sin_family: \n");
+    (*dest)->sin_family = src->sin_family;
+    LOG(DEBUG, "             ... Setting sin_port\n");
+    (*dest)->sin_port = src->sin_port;
+    LOG(DEBUG, "             ... Setting sin_addr\n");
+    (*dest)->sin_addr = src->sin_addr;
 
     return 0;
 }
 
-void free_sockaddr(struct sockaddr *sock_addr)
+void free_sockaddr_in(struct sockaddr_in *sock_addr)
 {
     free(sock_addr);
 }
@@ -121,11 +117,14 @@ int cpy_ifaddrs(struct ifaddrs *src, struct ifaddrs **dest)
     LOG(DEBUG, "     ... Setting ifa_flags\n");
     (*dest)->ifa_flags = src->ifa_flags;
     LOG(DEBUG, "     ... Setting ifa_addr\n");
-    cpy_sockaddr(src->ifa_addr, &(*dest)->ifa_addr);
+    cpy_sockaddr_in((struct sockaddr_in *)src->ifa_addr,
+                    (struct sockaddr_in **)&(*dest)->ifa_addr);
     LOG(DEBUG, "     ... Setting ifa_netmask\n");
-    cpy_sockaddr(src->ifa_netmask, &(*dest)->ifa_netmask);
+    cpy_sockaddr_in((struct sockaddr_in *)src->ifa_netmask,
+                    (struct sockaddr_in **)&(*dest)->ifa_netmask);
     LOG(DEBUG, "     ... Setting ifa_dstaddr\n");
-    cpy_sockaddr(src->ifa_dstaddr, &(*dest)->ifa_dstaddr);
+    cpy_sockaddr_in((struct sockaddr_in *)src->ifa_dstaddr,
+                    (struct sockaddr_in **)&(*dest)->ifa_dstaddr);
     LOG(DEBUG, "     ... Setting ifa_dat\n");
     (*dest)->ifa_data = NULL;
 

@@ -35,9 +35,9 @@
 #include <string.h>
 #include <errno.h>
 
-void print_sockaddr(char *msg, int indent_level, struct sockaddr *sock_addr);
-int cpy_sockaddr(struct sockaddr *src, struct sockaddr **dest);
-void free_sockaddr(struct sockaddr *sock_addr);
+void print_sockaddr_in(char *msg, int indent_level, struct sockaddr_in *sock_addr);
+int cpy_sockaddr_in(struct sockaddr_in *src, struct sockaddr_in **dest);
+void free_sockaddr_in(struct sockaddr_in *sock_addr);
 int cpy_ifaddrs(struct ifaddrs *src, struct ifaddrs **dest);
 
 #endif

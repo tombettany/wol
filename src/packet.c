@@ -90,9 +90,12 @@ int select_iface(struct ifaddrs **iface_addr_ptr)
     while (candidate_iface != NULL) {
         LOG(INFO, "Found interface: %s\n", candidate_iface->ifa_name);
 
-        print_sockaddr("Broadcast addr", 2, candidate_iface->ifa_broadaddr);
-        print_sockaddr("Netmask addr", 2, candidate_iface->ifa_netmask);
-        print_sockaddr("Dst addr", 2, candidate_iface->ifa_dstaddr);
+        print_sockaddr_in("Broadcast addr", 2,
+                          (struct sockaddr_in *)candidate_iface->ifa_broadaddr);
+        print_sockaddr_in("Netmask addr", 2,
+                          (struct sockaddr_in *)candidate_iface->ifa_netmask);
+        print_sockaddr_in("Dst addr", 2,
+                          (struct sockaddr_in *)candidate_iface->ifa_dstaddr);
 
         if (
                 strcmp(candidate_iface->ifa_name, "en0") == 0
@@ -159,9 +162,12 @@ int send_magic_packet(uint8_t *mac_addr)
         return E_NO_INTERFACE;
 
     LOG(INFO, "Using interface: %s\n", iface_addr->ifa_name);
-    print_sockaddr("Broadcast addr", 2, iface_addr->ifa_broadaddr);
-    print_sockaddr("Netmask addr", 2, iface_addr->ifa_netmask);
-    print_sockaddr("Dst addr", 2, iface_addr->ifa_dstaddr);
+    print_sockaddr_in("Broadcast addr", 2,
+                      (struct sockaddr_in *)iface_addr->ifa_broadaddr);
+    print_sockaddr_in("Netmask addr", 2,
+                      (struct sockaddr_in *)iface_addr->ifa_netmask);
+    print_sockaddr_in("Dst addr", 2,
+                      (struct sockaddr_in *)iface_addr->ifa_dstaddr);
 
     struct sockaddr_in target_addr;
     bzero((char *)& target_addr, sizeof(target_addr));
@@ -170,7 +176,7 @@ int send_magic_packet(uint8_t *mac_addr)
     target_addr.sin_addr.s_addr =
         ((struct sockaddr_in *)iface_addr->ifa_broadaddr)->sin_addr.s_addr;
 
-    print_sockaddr("\nTarget", 0, (struct sockaddr *)&target_addr);
+    print_sockaddr_in("\nTarget", 0, &target_addr);
 
     uint8_t *payload = create_magic_packet_payload(mac_addr);
 
