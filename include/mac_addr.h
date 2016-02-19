@@ -1,3 +1,6 @@
+#ifndef __WOL_MAC_ADDR_H__
+#define __WOL_MAC_ADDR_H__
+
 #include <inttypes.h>
 
 #define MAC_ADDR_LEN         6
@@ -6,3 +9,5 @@
 
 uint8_t char_to_binary(char c);
 uint8_t *parse_mac_addr_str(char **mac_addr_str);
+
+#endif

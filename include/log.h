@@ -1,3 +1,8 @@
+#ifndef __WOL_LOG_H__
+#define __WOL_LOG_H__
+
+#include <stdio.h>
+
 enum log_levels {
     CRITICAL = 1,
     ERROR = 2,
@@ -9,3 +14,5 @@ enum log_levels {
 #define LOG_LEVEL    INFO
 
 #define LOG(log_level, ...) if (log_level <= LOG_LEVEL) printf(__VA_ARGS__)
+
+#endif

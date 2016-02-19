@@ -1,3 +1,6 @@
+#ifndef __WOL_ERRORS_H__
+#define __WOL_ERRORS_H__
+
 enum error_codes {
     E_NOT_ENOUGH_ARGS = -1,
     E_SOCKET_CREATION_FAIL = -2,
@@ -7,3 +10,5 @@ enum error_codes {
     E_INCORRECT_MAC_ADDR_FORMAT = -6,
     E_COULD_NOT_ALLOCATE_MEMORY = -7
 };
+
+#endif

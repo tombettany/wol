@@ -1,3 +1,6 @@
+#ifndef __WOL_PACKET_H__
+#define __WOL_PACKET_H__
+
 #include "mac_addr.h"
 
 #include <inttypes.h>
@@ -9,3 +12,5 @@ uint8_t * create_magic_packet_payload(uint8_t *mac_addr);
 int select_iface(struct ifaddrs **iface_addr_ptr);
 void free_iface(struct ifaddrs *iface_addr);
 int send_magic_packet(uint8_t *mac_addr);
+
+#endif
