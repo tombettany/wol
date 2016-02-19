@@ -61,31 +61,38 @@ int select_iface(struct ifaddrs **iface_addr_ptr)
         return E_NO_INTERFACE;
     }
 
-    struct ifaddrs *current_addr = iface_addr;
-    struct ifaddrs *candidate_iface = NULL;
+    struct ifaddrs *candidate_iface = iface_addr;
 
     LOG(INFO, "Looking for interfaces...\n");
-    do {
-        LOG(INFO, "Found interface: %s\n", current_addr->ifa_name);
 
-        print_sockaddr("Broadcast addr", 2, current_addr->ifa_broadaddr);
-        print_sockaddr("Netmask addr", 2, current_addr->ifa_netmask);
-        print_sockaddr("Dst addr", 2, current_addr->ifa_dstaddr);
+    while (candidate_iface != NULL) {
+        LOG(INFO, "Found interface: %s\n", candidate_iface->ifa_name);
 
-        if (strcmp(current_addr->ifa_name, "en0") == 0) {
-            //break;
-            candidate_iface = current_addr;
-        }
+        print_sockaddr("Broadcast addr", 2, candidate_iface->ifa_broadaddr);
+        print_sockaddr("Netmask addr", 2, candidate_iface->ifa_netmask);
+        print_sockaddr("Dst addr", 2, candidate_iface->ifa_dstaddr);
 
-        if (current_addr->ifa_next == NULL) {
-            candidate_iface = current_addr;
-        } else {
-            current_addr = current_addr->ifa_next;
-        }
-    } while (current_addr->ifa_next != NULL);
+        if (
+                strcmp(candidate_iface->ifa_name, "en0") == 0
+                && candidate_iface->ifa_broadaddr != NULL
+                && candidate_iface->ifa_netmask != NULL
+                && candidate_iface->ifa_dstaddr != NULL
+        )
+            break;
+
+        candidate_iface = candidate_iface->ifa_next;
+    }
+
+    if (candidate_iface == NULL) {
+        LOG(DEBUG, "Could not find interface\n");
+        freeifaddrs(iface_addr);
+
+        return E_NO_INTERFACE;
+    }
 
     cpy_ifaddrs(candidate_iface, iface_addr_ptr);
     LOG(DEBUG, "Memory copied\n");
+
     freeifaddrs(iface_addr);
     LOG(DEBUG, "Iface freed\n\n");
 
