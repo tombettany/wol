@@ -41,9 +41,8 @@ uint8_t * create_magic_packet_payload(uint8_t *mac_addr)
     for (int j = 0; j < PAYLOAD_SZ; j++) {
         LOG(DEBUG, "%x ", payload[j]);
     }
-    LOG(DEBUG, "\n\n");
 
-    LOG(DEBUG, "mac address: ");
+    LOG(DEBUG, "\n\nmac address: ");
     for (int i = 0; i < MAC_ADDR_LEN; i++) {
         LOG(DEBUG, "%x", mac_addr[i]);
     }
@@ -127,37 +126,19 @@ int send_magic_packet(uint8_t *mac_addr)
                &broadcastEnable, sizeof(broadcastEnable));
 
     // Get information about the interface
-    struct ifaddrs iface_addr_tmp;
-    struct ifaddrs *iface_addr = &iface_addr_tmp;
-    struct ifaddrs **iface_addr_ptr = &iface_addr;
-    // *iface_addr_ptr = &iface_addr;
+    struct ifaddrs *iface_addr;
 
-    int iface_select_res = select_iface(iface_addr_ptr);
+    int iface_select_res = select_iface(&iface_addr);
     if (iface_select_res < 0)
         return iface_select_res;
 
-    iface_addr = *iface_addr_ptr;
-
-    if (iface_addr == NULL) {
+    if (iface_addr == NULL)
         return E_NO_INTERFACE;
-    }
 
     LOG(INFO, "Using interface: %s\n", iface_addr->ifa_name);
     print_sockaddr("Broadcast addr", 2, iface_addr->ifa_broadaddr);
     print_sockaddr("Netmask addr", 2, iface_addr->ifa_netmask);
     print_sockaddr("Dst addr", 2, iface_addr->ifa_dstaddr);
-
-
-    /*
-     * TODO: Use this to get broadcast IP dynamically
-    struct sockaddr_in *target_addr =
-        (struct sockaddr_in *)iface_addr->ifa_broadaddr;
-
-    target_addr->sin_family = AF_INET;
-    target_addr->sin_port = 9;
-    print_sockaddr("Target", 0, (struct sockaddr *)target_addr);
-    */
-
 
     struct sockaddr_in target_addr;
     bzero((char *)& target_addr, sizeof(target_addr));

@@ -105,8 +105,6 @@ int cpy_ifaddrs(struct ifaddrs *src, struct ifaddrs **dest)
     cpy_sockaddr(src->ifa_dstaddr, &(*dest)->ifa_dstaddr);
     LOG(DEBUG, "     ... Setting ifa_dat\n");
     (*dest)->ifa_data = NULL;
-    //memcpy((*dest)->ifa_data, src->ifa_data, sizeof());
-
 
     return 0;
 }
