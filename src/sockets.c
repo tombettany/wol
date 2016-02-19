@@ -110,25 +110,3 @@ int cpy_ifaddrs(struct ifaddrs *src, struct ifaddrs **dest)
 
     return 0;
 }
-
-
-void free_iface(struct ifaddrs *iface_addr)
-{
-    LOG(DEBUG, "Freeing iface...\n");
-    if (iface_addr == NULL)
-        return;
-
-    if (iface_addr->ifa_addr != NULL)
-        free_sockaddr(iface_addr->ifa_addr);
-
-    if (iface_addr->ifa_netmask != NULL)
-        free_sockaddr(iface_addr->ifa_netmask);
-
-    if (iface_addr->ifa_dstaddr != NULL)
-        free_sockaddr(iface_addr->ifa_dstaddr);
-
-    free(iface_addr);
-
-    LOG(DEBUG, "Iface freed!\n");
-}
-

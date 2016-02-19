@@ -171,7 +171,8 @@ int send_magic_packet(uint8_t *mac_addr)
     uint8_t *payload = create_magic_packet_payload(mac_addr);
 
     if (payload == NULL) {
-        free_iface(*iface_addr_ptr);
+        freeifaddrs(iface_addr);
+
         return E_COULD_NOT_ALLOCATE_MEMORY;
     }
 
@@ -182,12 +183,13 @@ int send_magic_packet(uint8_t *mac_addr)
 
     if (res == -1) {
         LOG(ERROR, "Error: %d\n", errno);
-        free_iface(*iface_addr_ptr);
+        freeifaddrs(iface_addr);
         free((uint8_t *)payload);
+
         return E_DATA_SEND_FAILURE;
     }
 
-    free_iface(*iface_addr_ptr);
+    freeifaddrs(iface_addr);
     free((uint8_t *)payload);
 
     if (close(sock_fd) == -1)
