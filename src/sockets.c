@@ -37,6 +37,39 @@
 #include <errno.h>
 
 
+void print2_sockaddr_in(char *msg, int indent_level, struct sockaddr_in *sock_addr)
+{
+    const int space_sz = 4;
+
+    char spacer[space_sz * indent_level + 1];
+    memset(spacer, ' ', space_sz * indent_level);
+    spacer[space_sz * indent_level] = '\0';
+
+    LOG(INFO, "%s%s: ", spacer, msg);
+
+    if (sock_addr == NULL) {
+        LOG(WARN, " ... Nothing to print\n");
+        return;
+    }
+
+    LOG(
+        INFO,
+        "sin_family: %d, sin_port: %d, sin_addr: %x (%s), sin_zero: ",
+        sock_addr->sin_family, sock_addr->sin_port,
+        sock_addr->sin_addr.s_addr, inet_ntoa(sock_addr->sin_addr)
+    );
+
+    for (int i = 0; i < 8; i++) {
+        LOG(INFO, ", %d", sock_addr->sin_zero[i]);
+    }
+
+    LOG(INFO, "\n");
+
+
+    int z = 0;
+    char *test = malloc(100);
+}
+
 void print_sockaddr_in(char *msg, int indent_level, struct sockaddr_in *sock_addr)
 {
     const int space_sz = 4;
